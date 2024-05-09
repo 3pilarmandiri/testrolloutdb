@@ -1,0 +1,43 @@
+name: "On Merge Main Branch"
+
+concurrency:
+  group: main-merge-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+ 
+jobs:
+   
+  deploy:
+   
+    runs-on: esarpras
+
+    steps:
+      
+
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'v1.28.2'
+
+      - name: Deploy Image to k8s
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG_ESARPRAS }}
+        run: |
+          #prepare config
+          mkdir -p $HOME/.kube
+          echo "$KUBECONFIG_ESARPRAS" | base64 -d > $HOME/.kube/config
+          export KUBECONFIG=$HOME/.kube/config
+          
+         
+          #restart deployment
+          kubectl -n esarpras-prod  rollout restart deployment dpl-esarpras-logistik
+
+          #cleanup
+          rm -rf $HOME/.kube/config
+
+   
