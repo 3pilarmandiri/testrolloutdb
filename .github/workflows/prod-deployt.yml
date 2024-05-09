@@ -35,9 +35,9 @@ jobs:
           
          
           #restart deployment
-          kubectl -n esarpras-prod  rollout restart deployment dpl-esarpras-logistik
+          kubectl --kubeconfig $HOME/.kube/config -n esarpras-prod  rollout restart deployment dpl-esarpras-logistik
 
           #cleanup
-          rm -rf $HOME/.kube/config
+          # rm -rf $HOME/.kube/config
 
    
